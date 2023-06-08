@@ -2,6 +2,7 @@ import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
+from lazypredict.Supervised import LazyClassifier
 
 data = pd.read_csv("Churn-Prediction-Dataset.csv")
 
@@ -19,7 +20,10 @@ data["churn"].replace({'yes' : 1, 'no' : 0}, inplace=True)
 
 data.drop(columns=['total_day_minutes', 'total_eve_minutes', 'total_night_minutes', 'total_intl_minutes'],inplace=True)
 y = data['churn']
-# data.drop(columns=["churn"], inplace= True)
 X = data.drop("churn", axis=1)
-print(X)
-# X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.2, random_state = 64)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.2, random_state = 64)
+
+clf = LazyClassifier(verbose=0,ignore_warnings=True, custom_metric=None)
+models,predictions = clf.fit(X_train, X_test, y_train, y_test)
+models.to_csv("models.csv")
+predictions.to_csv("predictions.csv")
